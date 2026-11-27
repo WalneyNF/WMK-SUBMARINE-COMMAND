@@ -1,5 +1,5 @@
-# Licenciamento e créditos
+# Licenciamento
 
-Projeto WMK: Walney Moreira Klein — walneyk@hotmail.com.
+As contribuições próprias do projeto WMK são licenciadas sob MIT (LICENSE). O código original Abissal foi fornecido sem declaração de licença; os direitos de terceiros permanecem sujeitos aos respectivos titulares. Three.js tem licença MIT própria.
 
-O código original Abissal foi fornecido para adaptação sem declaração de licença. A publicação não implica relicenciamento automático desse código. A intenção é distribuir as contribuições próprias sob MIT, após confirmar os direitos sobre o código original. Three.js possui licença MIT própria: https://github.com/mrdoob/three.js/blob/dev/LICENSE.
+Autor WMK: Walney Moreira Klein — walneyk@hotmail.com.
