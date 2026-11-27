@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>WMK Submarine Command — Abissal v0.4.0</title>
+<title>WMK Submarine Command — Abissal v0.4.1</title>
 
 <style>
 :root {
@@ -1089,12 +1089,13 @@ button {
 }
 #depthControls{position:absolute;left:24px;top:340px;width:215px;padding:12px;pointer-events:auto} #depthControls button{padding:7px;background:#173c48;color:#bdeee9;border:1px solid #417681;margin:2px;font-size:11px} #depthControls input{width:100%;accent-color:#59dfd0} #depthControls p{font-size:11px;margin:6px 0} #pauseBox{position:absolute;inset:0;display:none;place-items:center;background:#0008;pointer-events:auto;z-index:7} #pauseBox.show{display:grid} #scope{position:absolute;inset:0;pointer-events:none;display:none;background:radial-gradient(circle,transparent 0 34%,#02090e 35%);z-index:1} #scope.show{display:block} @media(max-width:620px){#depthControls{top:245px;left:10px;width:166px}} 
 #tacticalPanel{position:absolute;right:24px;top:230px;width:225px;padding:10px;pointer-events:auto}#radar{display:block;width:100%;aspect-ratio:1;background:#041b24;border:1px solid #27515c}#radarInfo,#navInfo{font-size:10px;color:#a4d3d3;margin:8px 0}#tacticalPanel.expanded{width:min(440px,90vw);top:85px;z-index:6}#tacticalPanel button{width:100%;margin-top:5px}#trainingBtn{grid-column:1/-1}#battleTools{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap}#battleTools button{font-size:10px;padding:6px;background:#173c48;color:#bdeee9} @media(max-height:800px){#tacticalPanel{top:210px;width:190px}#depthControls{top:300px}} @media(max-width:620px){#tacticalPanel{top:205px;right:10px;width:140px}#tacticalPanel.expanded{width:90vw}#radarInfo,#navInfo{font-size:9px}} .hangar-grid{max-height:55vh;overflow-y:auto;pointer-events:auto}.tech-grid{overflow-y:auto;pointer-events:auto;grid-auto-rows:minmax(300px,auto)}.tech-card{min-height:300px}@media(max-width:620px){.hangar-grid{max-height:none}.tech-grid{grid-auto-rows:minmax(260px,auto)}}
+.ocean-settings{position:fixed;right:14px;top:76px;z-index:22;color:#b7dce0;background:#09212ddd;padding:8px;border:1px solid #46747d;font:11px Arial}.ocean-settings select{background:#132f3c;color:white;border:1px solid #46747d;padding:4px}.ocean-settings label{display:block;margin-bottom:3px}.ocean-settings:has(select:focus){z-index:25}
 </style>
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 </head>
 
 <body>
-<div id="sceneRoot"></div>
+<div id="sceneRoot"></div><div class="ocean-settings" id="oceanSettings"><label for="seaPreset">Estado do mar</label><select id="seaPreset"><option value="calm">Calmo</option><option value="normal" selected>Ondulado</option><option value="rough">Agitado</option></select></div>
 <div class="scan-overlay"></div>
 
 <header class="topbar" id="topbar">
@@ -1169,7 +1170,7 @@ button {
     </div>
   </div>
 
-  <div class="port-note">WMK v0.4.0 · Walney Moreira Klein · walneyk@hotmail.com</div>
+  <div class="port-note">WMK v0.4.1 · Walney Moreira Klein · walneyk@hotmail.com</div>
 </section>
 
 <section id="hangarScreen" class="screen">
@@ -1422,42 +1423,16 @@ const fillLight = new THREE.DirectionalLight(0x4caeb5, 0.65);
 fillLight.position.set(30, 10, -35);
 scene.add(fillLight);
 
-const waterGeometry = new THREE.PlaneGeometry(700, 700, 32, 32);
-waterGeometry.rotateX(-Math.PI / 2);
-const waterPositions = waterGeometry.attributes.position;
-const waterBase = waterPositions.array.slice();
-
-const water = new THREE.Mesh(
-  waterGeometry,
-  new THREE.MeshStandardMaterial({
-    color: 0x0a4655,
-    roughness: 0.36,
-    metalness: 0.19,
-    transparent: true,
-    opacity: 0.96
-  })
-);
-water.position.y = 0;
-water.receiveShadow = true;
-scene.add(water);
-water.material.side = THREE.DoubleSide;
+import { createOcean } from "./js/ocean.js";
+const ocean = createOcean(THREE, scene);
+const water = ocean.mesh;
+$("#seaPreset").addEventListener("change",e=>ocean.setPreset(e.target.value));
 const seabed = new THREE.Mesh(new THREE.PlaneGeometry(700,700),new THREE.MeshStandardMaterial({color:0x244348,roughness:1}));
 seabed.rotation.x=-Math.PI/2; seabed.position.y=-17; scene.add(seabed);
 const rocks = new THREE.Group(); const rockGeo=new THREE.IcosahedronGeometry(1,0); const rockMat=new THREE.MeshStandardMaterial({color:0x385054});
 for(let i=0;i<65;i++){const m=new THREE.Mesh(rockGeo,rockMat);m.position.set(Math.sin(i*23.7)*150,-16.6,Math.cos(i*17.3)*150);m.scale.set(1+i%4,0.5+i%3,1+i%5);rocks.add(m);} scene.add(rocks);
 
-function animateWater(time) {
-  const positions = waterGeometry.attributes.position.array;
-  for (let i = 0; i < positions.length; i += 3) {
-    const x = waterBase[i];
-    const z = waterBase[i + 2];
-    positions[i + 1] =
-      0.075 * Math.sin(x * 0.032 + time * 1.35) +
-      0.055 * Math.cos(z * 0.028 - time * 0.95);
-  }
-  waterGeometry.attributes.position.needsUpdate = true;
-  waterGeometry.computeVertexNormals();
-}
+function animateWater(time) { ocean.update(time); }
 
 function addBox(parent, width, height, depth, x, y, z, material) {
   const mesh = new THREE.Mesh(new THREE.BoxGeometry(width, height, depth), material);
@@ -2288,7 +2263,7 @@ function updateBattle(dt) {
     const nz=enemy.originZ+(Math.cos(enemy.phase)-1)*8;
     const dx=nx-enemy.model.position.x, dz=nz-enemy.model.position.z;
     enemy.model.rotation.y=Math.atan2(-dx,-dz);
-    enemy.model.position.x=nx; enemy.model.position.z=nz;
+    enemy.model.position.x=nx; enemy.model.position.z=nz; enemy.model.position.y=ocean.heightAt(nx,nz)*0.65;
     if(playerModel.position.distanceTo(enemy.model.position)<24) enemy.detectedUntil=battleState.time+5;
 
     const distance = playerModel.position.distanceTo(enemy.model.position);
@@ -2658,10 +2633,11 @@ renderer.setAnimationLoop(now => {
   const time = now / 1000;
 
   animateWater(time);
+  if(playerModel && sceneMode!=="battle") playerModel.position.y=0.28+ocean.heightAt(playerModel.position.x,playerModel.position.z)*0.45;
   const underwater=sceneMode==="battle" && camera.position.y<0;
   scene.background.setHex(underwater?0x082c40:0x567b8c);
   scene.fog.color.copy(scene.background); scene.fog.near=underwater?8:105; scene.fog.far=underwater?90:290;
-  water.material.opacity=underwater?0.35:0.96;
+  ocean.setUnderwater(underwater); ocean.setFog(scene.fog);
 
   if (sceneMode === "battle") {
     if(!paused) updateBattle(dt);
@@ -2701,6 +2677,6 @@ function showToast(message) {
 renderAll();
 saveProfile();
 </script>
-<div style="position:fixed;bottom:2px;right:8px;font-size:9px;color:#91a8b1;z-index:21;pointer-events:none">v0.4.0 · Walney Moreira Klein — walneyk@hotmail.com</div>
+<div style="position:fixed;bottom:2px;right:8px;font-size:9px;color:#91a8b1;z-index:21;pointer-events:none">v0.4.1 · Walney Moreira Klein — walneyk@hotmail.com</div>
 </body>
 </html>
