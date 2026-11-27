@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>WMK Submarine Command — Abissal v0.3.0</title>
+<title>WMK Submarine Command — Abissal v0.4.0</title>
 
 <style>
 :root {
@@ -1088,7 +1088,8 @@ button {
   }
 }
 #depthControls{position:absolute;left:24px;top:340px;width:215px;padding:12px;pointer-events:auto} #depthControls button{padding:7px;background:#173c48;color:#bdeee9;border:1px solid #417681;margin:2px;font-size:11px} #depthControls input{width:100%;accent-color:#59dfd0} #depthControls p{font-size:11px;margin:6px 0} #pauseBox{position:absolute;inset:0;display:none;place-items:center;background:#0008;pointer-events:auto;z-index:7} #pauseBox.show{display:grid} #scope{position:absolute;inset:0;pointer-events:none;display:none;background:radial-gradient(circle,transparent 0 34%,#02090e 35%);z-index:1} #scope.show{display:block} @media(max-width:620px){#depthControls{top:245px;left:10px;width:166px}} 
-#tacticalPanel{position:absolute;right:24px;top:230px;width:225px;padding:10px;pointer-events:auto}#radar{display:block;width:100%;aspect-ratio:1;background:#041b24;border:1px solid #27515c}#radarInfo,#navInfo{font-size:10px;color:#a4d3d3;margin:8px 0}#tacticalPanel.expanded{width:min(440px,90vw);top:85px;z-index:6}#tacticalPanel button{width:100%;margin-top:5px}#trainingBtn{grid-column:1/-1}#battleTools{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap}#battleTools button{font-size:10px;padding:6px;background:#173c48;color:#bdeee9} @media(max-height:800px){#tacticalPanel{top:210px;width:190px}#depthControls{top:300px}} @media(max-width:620px){#tacticalPanel{top:205px;right:10px;width:140px}#tacticalPanel.expanded{width:90vw}#radarInfo,#navInfo{font-size:9px}} </style>
+#tacticalPanel{position:absolute;right:24px;top:230px;width:225px;padding:10px;pointer-events:auto}#radar{display:block;width:100%;aspect-ratio:1;background:#041b24;border:1px solid #27515c}#radarInfo,#navInfo{font-size:10px;color:#a4d3d3;margin:8px 0}#tacticalPanel.expanded{width:min(440px,90vw);top:85px;z-index:6}#tacticalPanel button{width:100%;margin-top:5px}#trainingBtn{grid-column:1/-1}#battleTools{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap}#battleTools button{font-size:10px;padding:6px;background:#173c48;color:#bdeee9} @media(max-height:800px){#tacticalPanel{top:210px;width:190px}#depthControls{top:300px}} @media(max-width:620px){#tacticalPanel{top:205px;right:10px;width:140px}#tacticalPanel.expanded{width:90vw}#radarInfo,#navInfo{font-size:9px}} .hangar-grid{max-height:55vh;overflow-y:auto;pointer-events:auto}.tech-grid{overflow-y:auto;pointer-events:auto;grid-auto-rows:minmax(300px,auto)}.tech-card{min-height:300px}@media(max-width:620px){.hangar-grid{max-height:none}.tech-grid{grid-auto-rows:minmax(260px,auto)}}
+</style>
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 </head>
 
@@ -1157,19 +1158,18 @@ button {
   </div>
 
   <div class="mission-card glass">
+    <label for="missionSelect" class="kicker">Escolher missão</label>
+    <select id="missionSelect" style="width:100%;padding:10px;margin:8px 0;background:#102b38;color:#e8f2f1;border:1px solid #367477"></select>
     <div class="kicker">Operação disponível</div>
-    <h3>MAR DE HÉBRIDAS</h3>
-    <p>
-      Uma escolta inimiga foi localizada. Afunde os navios hostis e retorne
-      à base para receber créditos e experiência.
-    </p>
+    <h3 id="missionName">MAR DE HÉBRIDAS</h3>
+    <p id="missionDesc"></p>
     <div class="mission-line">
       <span>OBJETIVO</span>
-      <strong>3 CONTATOS HOSTIS</strong>
+      <strong id="missionCount">3 CONTATOS HOSTIS</strong>
     </div>
   </div>
 
-  <div class="port-note">WMK v0.3.0 · Walney Moreira Klein · walneyk@hotmail.com</div>
+  <div class="port-note">WMK v0.4.0 · Walney Moreira Klein · walneyk@hotmail.com</div>
 </section>
 
 <section id="hangarScreen" class="screen">
@@ -1339,6 +1339,17 @@ const SUBS = [
   }
 ];
 
+SUBS.push(...[{"id":"orca","name":"ORCA","designation":"S-21","tier":"TIER IV","role":"Patrulha oceânica","description":"Casco largo e autonomia ampliada.","hull":155,"speed":19,"torpedoSpeed":39,"ammo":14,"credits":2600,"xp":1000,"accent":7062783,"shape":[1.25,1.15,1.1],"style":1},{"id":"triton","name":"TRITON","designation":"S-32","tier":"TIER V","role":"Exploração profunda","description":"Modelo de casco alongado e torre baixa.","hull":170,"speed":20,"torpedoSpeed":40,"ammo":16,"credits":3600,"xp":1450,"accent":11917190,"shape":[0.95,0.85,1.4],"style":2},{"id":"leviathan","name":"LEVIATHAN","designation":"X-50","tier":"TIER VI","role":"Plataforma pesada","description":"Grande casco e reserva de munição.","hull":200,"speed":21,"torpedoSpeed":42,"ammo":18,"credits":4800,"xp":2000,"accent":13214975,"shape":[1.35,1.2,1.55],"style":3}]);
+Object.assign(SUBS[0],{shape:[1,1,1],style:0});
+Object.assign(SUBS[1],{shape:[.85,.85,1.12],style:1});
+Object.assign(SUBS[2],{shape:[1.12,1.08,1.24],style:2});
+const MISSIONS = [
+{id:"hebridas",name:"Mar de Hébridas",desc:"Patrulha inicial contra três escoltas.",count:3,hp:2,time:600,reward:1,minTier:0},
+{id:"comboio",name:"Comboio perdido",desc:"Quatro contatos de superfície, incluindo cargueiros.",count:4,hp:2,time:720,reward:1.3,minTier:1},
+{id:"tempestade",name:"Horizonte cinzento",desc:"Cinco contatos e visibilidade reduzida.",count:5,hp:2,time:780,reward:1.6,minTier:2},
+{id:"abismo",name:"Operação Abismo",desc:"Seis contatos resistentes para a frota avançada.",count:6,hp:3,time:900,reward:2,minTier:5}
+];
+let selectedMission=MISSIONS[0];
 const DEFAULT_PROFILE = {
   credits: 650,
   xp: 120,
@@ -1649,6 +1660,10 @@ function createSubModel(sub) {
 
   root.add(propeller);
   root.userData.propeller = propeller;
+  const shape=sub.shape||[1,1,1]; root.scale.set(...shape);
+  if(sub.style===1){addBox(root,2.1,.13,.75,0,.1,-2.3,metalMaterial);addBox(root,.48,.28,1.7,0,1.06,.25,hullMaterial);}
+  if(sub.style===2){addBox(root,.88,.25,2.5,0,.64,.2,hullMaterial);addBox(root,2.15,.12,.65,0,.05,-1.4,accentMaterial);}
+  if(sub.style===3){for(const x of [-.52,.52])addBox(root,.22,.42,5.2,x,.05,0,metalMaterial);addBox(root,1.05,.32,2.15,0,.9,.3,hullMaterial);}
   root.userData.subId = sub.id;
   return root;
 }
@@ -1785,6 +1800,10 @@ function renderResources() {
 }
 
 function renderPort() {
+  const picker=$("#missionSelect");
+  picker.innerHTML=MISSIONS.map(m=>'<option value="'+m.id+'" '+(m.id===selectedMission.id?'selected':'')+'>'+m.name+' · '+m.count+' contatos</option>').join("");
+  $("#missionName").textContent=selectedMission.name;$("#missionDesc").textContent=selectedMission.desc+" · Requer "+SUBS[selectedMission.minTier].name+" ou superior.";
+  $("#missionCount").textContent=selectedMission.count+" CONTATOS";
   const sub = currentSub();
   $("#portSubName").textContent = `${sub.name} · ${sub.designation}`;
   $("#portSubRole").textContent = sub.role;
@@ -1793,12 +1812,12 @@ function renderPort() {
   $("#portSpeed").textContent = `${sub.speed * 3} kn arcade`;
 }
 
-function submarineSvg() {
+function submarineSvg(sub) {
   return `
     <svg viewBox="0 0 260 76" aria-hidden="true">
       <path d="M20 43h26l14-13h101l19 10h48l15 9-15 9H76l-20-5H20z"
             fill="none" stroke="currentColor" stroke-width="2"/>
-      <path d="M102 30l8-12h31l12 12M134 18v-9m-22 44v7m43-7v7"
+      <path d="${sub.style===1?"M90 30l12-9h58l10 9M134 21V9":sub.style===2?"M115 30l4-8h45l8 8M140 22V12":sub.style===3?"M90 30l8-17h62l14 17M134 13V5":"M102 30l8-12h31l12 12M134 18v-9m-22 44v7m43-7v7"}"
             fill="none" stroke="currentColor" stroke-width="2"/>
       <circle cx="77" cy="46" r="2" fill="currentColor"/>
       <circle cx="89" cy="46" r="2" fill="currentColor"/>
@@ -1823,7 +1842,7 @@ function renderTech() {
           <span>${sub.tier}</span>
           <span class="${unlocked ? "owned-label" : ""}">${stateLabel}</span>
         </div>
-        <div class="schematic">${submarineSvg()}</div>
+        <div class="schematic">${submarineSvg(sub)}</div>
         <h2>${sub.name} <span style="color:var(--muted);font-size:12px">${sub.designation}</span></h2>
         <p class="role">${sub.role}</p>
         <div class="tech-specs">
@@ -2281,7 +2300,7 @@ function updateBattle(dt) {
 
   updateTorpedoes(dt);
 
-  if (!battleState.training && (battleState.hull <= 0 || battleState.time >= 600 || (battleState.ammo===0 && !torpedoes.some(t=>!t.hostile) && battleState.kills<enemies.length)) && missionRunning) {
+  if (!battleState.training && (battleState.hull <= 0 || battleState.time >= battleState.mission.time || (battleState.ammo===0 && !torpedoes.some(t=>!t.hostile) && battleState.kills<enemies.length)) && missionRunning) {
     finishMission(false);
   }
 }
@@ -2391,12 +2410,14 @@ function activateBattleScreen() {
 
 function startBattle(training = false) {
   training = training === true;
+  if(!training && SUBS.indexOf(currentSub())<selectedMission.minTier){showToast("PESQUISE UM SUBMARINO DO TIER NECESSÁRIO");return;}
+  const mission=training?MISSIONS[0]:selectedMission;
   clearBattleGroup();
   keys.clear();
 
   const sub = currentSub();
   battleState = {
-    training,
+    training, mission,
     hull: sub.hull,
     ammo: sub.ammo,
     speed: 0,
@@ -2413,8 +2434,10 @@ function startBattle(training = false) {
     { x: 26, z: -111, name: "ESCOLTA 03", type: "CORVETA" }
   ];
 
-  enemies = positions.map((data, index) => {
-    const model = createShipModel(index);
+  for(let i=3;i<mission.count;i++)positions.push({x:i%2?45:-45,z:-35-(i-3)*35,name:"CONTATO "+(i+1),type:mission.id==="comboio"?"CARGUEIRO":"ESCOLTA"});
+  enemies = positions.slice(0,mission.count).map((data, index) => {
+    const model = createShipModel(index%3);
+    if(data.type==="CARGUEIRO"){model.scale.set(1.4,.85,1.55);const mat=new THREE.MeshStandardMaterial({color:0x8c6551});for(let j=0;j<3;j++)addBox(model,1.5,.7,1.1,0,1.3,-1+j*1.3,mat);}
     model.position.set(data.x, 0, data.z);
     model.rotation.y = index === 1 ? 0.12 : index === 2 ? -0.12 : 0;
     battleGroup.add(model);
@@ -2424,8 +2447,8 @@ function startBattle(training = false) {
       name: data.name,
       type: data.type,
       model,
-      hp: 2,
-      maxHp: 2,
+      hp: mission.hp,
+      maxHp: mission.hp,
       alive: true,
       originX:data.x, originZ:data.z, phase:0, detectedUntil:0,
       fireTimer: 8 + index * 2
@@ -2451,7 +2474,7 @@ function startBattle(training = false) {
   $("#resultPanel").classList.remove("show");
   activateBattleScreen();
   $("#tacticalPanel").classList.remove("expanded");$("#resetTraining").hidden=!training;
-  $(".battle-banner strong").textContent=training?"ACADEMIA · TREINAMENTO LIVRE":"OPERAÇÃO · MAR DE HÉBRIDAS";
+  $(".battle-banner strong").textContent=training?"ACADEMIA · TREINAMENTO LIVRE":"OPERAÇÃO · "+mission.name.toUpperCase();
   logEvent(training?"TREINAMENTO SEM DANO INIMIGO OU RECOMPENSAS":"USE R PARA LOCALIZAR CONTATOS");
   updateBattleHUD();
 }
@@ -2463,8 +2486,8 @@ function finishMission(won) {
   keys.clear();
 
   const kills = battleState.kills;
-  const creditsEarned = won ? 350 + kills * 180 : 90 + kills * 90;
-  const xpEarned = won ? 160 + kills * 90 : 35 + kills * 35;
+  const creditsEarned = Math.round((won ? 350 + kills * 180 : 90 + kills * 90)*(won?battleState.mission.reward:1));
+  const xpEarned = Math.round((won ? 160 + kills * 90 : 35 + kills * 35)*(won?battleState.mission.reward:1));
 
   profile.credits += creditsEarned;
   profile.xp += xpEarned;
@@ -2497,6 +2520,7 @@ function returnToPort() {
   openAppScreen("port");
 }
 
+$("#missionSelect").addEventListener("change",e=>{selectedMission=MISSIONS.find(m=>m.id===e.target.value)||MISSIONS[0];renderPort();});
 $("#launchBtn").addEventListener("click", ()=>startBattle(false));
 $("#trainingBtn").onclick=()=>startBattle(true);
 $("#resetTraining").onclick=()=>{if(missionRunning && battleState.training && !paused)startBattle(true)};
@@ -2677,6 +2701,6 @@ function showToast(message) {
 renderAll();
 saveProfile();
 </script>
-<div style="position:fixed;bottom:2px;right:8px;font-size:9px;color:#91a8b1;z-index:21;pointer-events:none">v0.3.0 · Walney Moreira Klein — walneyk@hotmail.com</div>
+<div style="position:fixed;bottom:2px;right:8px;font-size:9px;color:#91a8b1;z-index:21;pointer-events:none">v0.4.0 · Walney Moreira Klein — walneyk@hotmail.com</div>
 </body>
 </html>
