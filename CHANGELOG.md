@@ -1,3 +1,12 @@
+# v0.4.2 — Oceano e esteiras
+
+- Quatro ondas direcionais, reflexo procedural do céu e espuma irregular.
+- Esteiras persistentes de navios e submarino, com largura crescente e dissipação.
+- Bolhas subaquáticas instanciadas e limitadas a 160.
+- Balanço longitudinal e lateral dos navios.
+- Sem alterações nas regras de combate.
+- Teste visual e compilação GLSL pendentes.
+
 # v0.4.1 — WMK Ocean Engine
 
 - Novo shader GLSL de água, ondas GPU e três estados do mar.
