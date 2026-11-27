@@ -1,3 +1,12 @@
+# v0.4.0 — Expansão da frota e missões
+
+- Três submarinos adicionais e variantes visuais dos seis modelos.
+- Quatro operações selecionáveis com requisitos de tier, quantidade de contatos, tempo e recompensas próprios.
+- Variante de cargueiro procedural.
+- Rolagem no hangar e árvore tecnológica.
+- Licença MIT para contribuições próprias.
+- Testes de navegador pendentes.
+
 # v0.3.0
 - Academia livre sem ataques inimigos, sem recompensas e com reinício.
 - Sonar arcade com alcance e validade de contatos; seleção restrita aos detectados.
