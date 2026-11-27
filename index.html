@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>WMK Submarine Command — Abissal v0.4.2</title>
+<title>WMK Submarine Command — Abissal v0.4.3</title>
 
 <style>
 :root {
@@ -1095,7 +1095,7 @@ button {
 </head>
 
 <body>
-<div id="sceneRoot"></div><div class="ocean-settings" id="oceanSettings"><label for="seaPreset">Estado do mar</label><select id="seaPreset"><option value="calm">Calmo</option><option value="normal" selected>Ondulado</option><option value="rough">Agitado</option></select></div>
+<div id="sceneRoot"></div><div class="ocean-settings" id="oceanSettings"><label for="seaPreset">Estado do mar</label><select id="seaPreset"><option value="custom">Personalizado</option><option value="calm">Calmo</option><option value="normal" selected>Ondulado</option><option value="rough">Agitado</option></select> <a href="studio/ocean.html" target="_blank" rel="noopener" style="color:#59dfd0">Ocean Studio ↗</a></div>
 <div class="scan-overlay"></div>
 
 <header class="topbar" id="topbar">
@@ -1170,7 +1170,7 @@ button {
     </div>
   </div>
 
-  <div class="port-note">WMK v0.4.2 · Walney Moreira Klein · walneyk@hotmail.com</div>
+  <div class="port-note">WMK v0.4.3 · Walney Moreira Klein · walneyk@hotmail.com</div>
 </section>
 
 <section id="hangarScreen" class="screen">
@@ -1424,9 +1424,12 @@ fillLight.position.set(30, 10, -35);
 scene.add(fillLight);
 
 import { createOcean } from "./js/ocean.js";
-const ocean = createOcean(THREE, scene);
+import {loadOcean,saveOcean,OCEAN_KEY} from "./js/ocean-config.js";
+const ocean = createOcean(THREE, scene, loadOcean());
 const water = ocean.mesh;
-$("#seaPreset").addEventListener("change",e=>ocean.setPreset(e.target.value));
+$("#seaPreset").value="custom";
+$("#seaPreset").addEventListener("change",e=>{if(e.target.value==="custom"){ocean.setConfig(loadOcean());return;}ocean.setPreset(e.target.value);try{saveOcean(ocean.getConfig());}catch(err){console.warn(err);}});
+window.addEventListener("storage",e=>{if(e.key===OCEAN_KEY){ocean.setConfig(loadOcean());$("#seaPreset").value="custom";}});
 const seabed = new THREE.Mesh(new THREE.PlaneGeometry(700,700),new THREE.MeshStandardMaterial({color:0x244348,roughness:1}));
 seabed.rotation.x=-Math.PI/2; seabed.position.y=-17; scene.add(seabed);
 const rocks = new THREE.Group(); const rockGeo=new THREE.IcosahedronGeometry(1,0); const rockMat=new THREE.MeshStandardMaterial({color:0x385054});
@@ -2684,6 +2687,6 @@ function showToast(message) {
 renderAll();
 saveProfile();
 </script>
-<div style="position:fixed;bottom:2px;right:8px;font-size:9px;color:#91a8b1;z-index:21;pointer-events:none">v0.4.2 · Walney Moreira Klein — walneyk@hotmail.com</div>
+<div style="position:fixed;bottom:2px;right:8px;font-size:9px;color:#91a8b1;z-index:21;pointer-events:none">v0.4.3 · Walney Moreira Klein — walneyk@hotmail.com</div>
 </body>
 </html>
