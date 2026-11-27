@@ -2,7 +2,7 @@
 
 # WMK Submarine Command — Abissal
 
-**Versão 0.4.0 | Simulador naval 3D arcade para navegador**
+**Versão 0.4.1 | Simulador naval 3D arcade para navegador**
 
 Comande submarinos fictícios, explore o oceano, realize missões e evolua sua frota. Desenvolvido em HTML5, CSS3, JavaScript e Three.js 0.160.0.
 
@@ -54,3 +54,7 @@ Selecione a operação no porto antes de zarpar. Recompensas e tempo variam. Tod
 
 ## Licença
 MIT para contribuições próprias — veja [LICENSE](LICENSE) e [NOTICE](NOTICE.md).
+
+## WMK Ocean Engine
+
+Shader procedural com ondas GPU, Fresnel, brilho solar, espuma e três estados do mar. [Pesquisa técnica](docs/pesquisa-oceano.md). Testes WebGL pendentes.
