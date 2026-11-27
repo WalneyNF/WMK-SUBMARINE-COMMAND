@@ -21,3 +21,10 @@ Calmo (0.35), ondulado (1), agitado (1.8). Multiplicadores arcade da amplitude. 
 - Testes WebGL, compilação GLSL e FPS em hardware real.
 
 Autor: Walney Moreira Klein — walneyk@hotmail.com.
+
+## Pesquisa v0.4.2
+- World of Warships: https://worldofwarships.com/en/news/general-news/graphics-update-review/ — ondas, espuma e esteiras dinâmicas.
+- War Thunder: https://warthunder.com/en/news/9957-development-ninth-wave-new-water-and-naval-battle-effects-en — integração visual de água e espuma.
+- NVIDIA GPU Gems: https://developer.nvidia.com/gpugems/gpugems/part-i-natural-effects/chapter-1-effective-water-simulation-physical-models — ondas geométricas e detalhes de superfície.
+
+Implementação original aproximada, sem FFT, reflexão planar ou dinâmica real de fluidos. A esteira utiliza uma faixa histórica de até 48 amostras por embarcação, com dissolução gradual. A malha usa 192 segmentos por lado; desempenho ainda não medido.
