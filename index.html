@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>WMK Submarine Command — Abissal v0.4.1</title>
+<title>WMK Submarine Command — Abissal v0.4.2</title>
 
 <style>
 :root {
@@ -1170,7 +1170,7 @@ button {
     </div>
   </div>
 
-  <div class="port-note">WMK v0.4.1 · Walney Moreira Klein · walneyk@hotmail.com</div>
+  <div class="port-note">WMK v0.4.2 · Walney Moreira Klein · walneyk@hotmail.com</div>
 </section>
 
 <section id="hangarScreen" class="screen">
@@ -1741,6 +1741,7 @@ const depthY = d => 0.28 - d * WORLD_SCALE;
 const keys = new Set();
 
 function clearBattleGroup() {
+  ocean.clearEffects();
   for (const child of [...battleGroup.children]) {
     battleGroup.remove(child);
     disposeTree(child);
@@ -2247,7 +2248,7 @@ function updateBattle(dt) {
   const delta=battleState.targetDepth-battleState.depth;
   const step=clamp(delta,-8*dt,8*dt);
   battleState.depth+=step;
-  playerModel.position.y=depthY(battleState.depth);
+  playerModel.position.y=depthY(battleState.depth)+ocean.heightAt(playerModel.position.x,playerModel.position.z)*Math.max(0,1-battleState.depth/8)*.75;
   playerModel.rotation.x=THREE.MathUtils.lerp(playerModel.rotation.x,clamp(-delta*0.018,-0.22,0.22),1-Math.exp(-dt*3));
   playerModel.position.x=clamp(playerModel.position.x,-155,155); playerModel.position.z=clamp(playerModel.position.z,-155,155);
 
@@ -2263,7 +2264,11 @@ function updateBattle(dt) {
     const nz=enemy.originZ+(Math.cos(enemy.phase)-1)*8;
     const dx=nx-enemy.model.position.x, dz=nz-enemy.model.position.z;
     enemy.model.rotation.y=Math.atan2(-dx,-dz);
-    enemy.model.position.x=nx; enemy.model.position.z=nz; enemy.model.position.y=ocean.heightAt(nx,nz)*0.65;
+    enemy.model.position.x=nx; enemy.model.position.z=nz; enemy.model.position.y=ocean.heightAt(nx,nz)*0.85;
+    const eh=enemy.model.rotation.y, ef=forwardVector(eh);
+    enemy.model.rotation.x=THREE.MathUtils.lerp(enemy.model.rotation.x,Math.atan2(ocean.heightAt(nx-ef.x*4,nz-ef.z*4)-ocean.heightAt(nx+ef.x*4,nz+ef.z*4),8),dt*2);
+    enemy.model.rotation.z=THREE.MathUtils.lerp(enemy.model.rotation.z,Math.atan2(ocean.heightAt(nx+Math.cos(eh),nz-Math.sin(eh))-ocean.heightAt(nx-Math.cos(eh),nz+Math.sin(eh)),2),dt*2);
+    ocean.track(enemy.id,nx,nz,eh,Math.hypot(dx,dz)/Math.max(dt,.001),2*enemy.model.scale.x,12*enemy.model.scale.z,0,dt);
     if(playerModel.position.distanceTo(enemy.model.position)<24) enemy.detectedUntil=battleState.time+5;
 
     const distance = playerModel.position.distanceTo(enemy.model.position);
@@ -2273,6 +2278,7 @@ function updateBattle(dt) {
     }
   }
 
+  ocean.track('player',playerModel.position.x,playerModel.position.z,battleState.heading,battleState.speed,1.4*playerModel.scale.x,9.4*playerModel.scale.z,battleState.depth,dt);
   updateTorpedoes(dt);
 
   if (!battleState.training && (battleState.hull <= 0 || battleState.time >= battleState.mission.time || (battleState.ammo===0 && !torpedoes.some(t=>!t.hostile) && battleState.kills<enemies.length)) && missionRunning) {
@@ -2653,6 +2659,7 @@ renderer.setAnimationLoop(now => {
     updateCamera(dt, time);
   }
 
+  ocean.renderEffects();
   renderer.render(scene, camera);
 });
 
@@ -2677,6 +2684,6 @@ function showToast(message) {
 renderAll();
 saveProfile();
 </script>
-<div style="position:fixed;bottom:2px;right:8px;font-size:9px;color:#91a8b1;z-index:21;pointer-events:none">v0.4.1 · Walney Moreira Klein — walneyk@hotmail.com</div>
+<div style="position:fixed;bottom:2px;right:8px;font-size:9px;color:#91a8b1;z-index:21;pointer-events:none">v0.4.2 · Walney Moreira Klein — walneyk@hotmail.com</div>
 </body>
 </html>
