@@ -1,3 +1,11 @@
+# v0.4.1 — WMK Ocean Engine
+
+- Novo shader GLSL de água, ondas GPU e três estados do mar.
+- Reflexo aproximado do céu, espuma, brilho solar e neblina.
+- Altura visual dos navios sincronizada com as ondas.
+- Pesquisa técnica em docs/pesquisa-oceano.md.
+- Compilação GLSL e testes em navegador pendentes.
+
 # v0.4.0 — Expansão da frota e missões
 
 - Três submarinos adicionais e variantes visuais dos seis modelos.
