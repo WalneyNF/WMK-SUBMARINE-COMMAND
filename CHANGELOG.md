@@ -1,3 +1,12 @@
+# v0.4.3 — Ocean Studio
+
+- Parâmetros de ondas e material em uniforms editáveis.
+- Schema JSON validado e presets compartilhados.
+- Editor 3D com preview de navio/submarino, painéis móveis e layout persistente.
+- Importação, exportação e persistência local; sincronização entre abas.
+- Manual técnico em docs/ocean-studio.md.
+- Testes WebGL pendentes.
+
 # v0.4.2 — Oceano e esteiras
 
 - Quatro ondas direcionais, reflexo procedural do céu e espuma irregular.
