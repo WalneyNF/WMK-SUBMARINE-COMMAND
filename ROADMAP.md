@@ -5,7 +5,9 @@
 - [x] v0.3 — Academia, sonar e radar
 - [x] v0.4 — Expansão da frota e quatro missões
 - [x] v0.4.1 — Shader oceânico e estados do mar
-- [ ] v0.4.2 — Laboratório, câmeras e painéis móveis
+- [x] v0.4.2 — Oceano e esteiras
+- [x] v0.4.3 — Ocean Studio, JSON e documentação
+- [ ] v0.4.4 — Laboratório submarino e câmeras
 - [ ] v0.5 — Modelos individuais e GLB
 - [ ] v0.6 — Danos por módulos
 - [ ] v0.7 — Frotas, mapas e campanhas
